@@ -1,0 +1,17 @@
+# Ignore the raw datasets
+*.csv
+
+# Ignore Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+# Ignore environment files
+.env
+venv/
+
+# Ignore Android/Kotlin build files
+.gradle/
+build/
