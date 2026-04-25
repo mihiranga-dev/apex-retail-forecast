@@ -18,3 +18,12 @@ build/
 
 # Ignore large Machine Learning models
 *.joblib
+
+# Ignore Java/Maven build files
+target/
+*.jar
+*.war
+
+# Ignore IntelliJ IDEA config files
+.idea/
+*.iml
