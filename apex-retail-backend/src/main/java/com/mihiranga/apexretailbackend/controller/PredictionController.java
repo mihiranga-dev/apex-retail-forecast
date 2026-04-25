@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/api/v1/prediction") // Base URL for all prediction-related endpoints
+@RequestMapping("/api/v1/predictions") // Base URL for all prediction-related endpoints
 @CrossOrigin(origins = "*") // Allows frontend to make requests to this API from any origin
 public class PredictionController {
 
