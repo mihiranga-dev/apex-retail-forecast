@@ -37,6 +37,7 @@ class PredictionRequest(BaseModel):
 # Create the POST endpoint
 @app.post("/predict")
 def predict_sales(request: PredictionRequest):
+    print(f"DEBUG: Data reaching Python -> {request.dict()}")
     try:
         # Convert the incoming JSON request into a Pandas DataFrame
         input_data = pd.DataFrame([request.model_dump()])

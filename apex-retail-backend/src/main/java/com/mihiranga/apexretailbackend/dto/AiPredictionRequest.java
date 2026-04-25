@@ -6,19 +6,19 @@ import lombok.Data;
 @Data
 public class AiPredictionRequest {
 
-    @JsonProperty("Store")
+    @JsonProperty("store")
     private int store;
 
-    @JsonProperty("Dept")
+    @JsonProperty("dept")
     private int dept;
 
-    @JsonProperty("Size")
+    @JsonProperty("size")
     private int size;
 
-    @JsonProperty("Temperature")
+    @JsonProperty("temperature")
     private double temperature;
 
-    @JsonProperty("Fuel_Price")
+    @JsonProperty("fuelPrice")
     private double fuelPrice;
 
     @JsonProperty("MarkDown1")
@@ -36,16 +36,16 @@ public class AiPredictionRequest {
     @JsonProperty("MarkDown5")
     private double markDown5;
 
-    @JsonProperty("CPI")
+    @JsonProperty("cpi")
     private double cpi;
 
-    @JsonProperty("Unemployment")
+    @JsonProperty("unemployment")
     private double unemployment;
 
-    @JsonProperty("Week")
+    @JsonProperty("week")
     private int week;
 
-    @JsonProperty("Year")
+    @JsonProperty("year")
     private int year;
 
     @JsonProperty("Type_B")

@@ -6,8 +6,10 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import axios from "axios";
 
 // A mini-database of the stores and their actual square footage
 const STORE_DICTIONARY = {
@@ -162,7 +164,11 @@ export default function App() {
     Year: "2012",
   });
 
-  // Automatically update the Size whenever the Store changes
+  // State for API loading, errors, and the final prediction result
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [prediction, setPrediction] = useState(null);
+
   const handleStoreChange = (selectedStore) => {
     setFormData({
       ...formData,
@@ -175,9 +181,42 @@ export default function App() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handlePredict = () => {
-    console.log("Payload ready for AI Engine:", formData);
-    alert("Payload generated! Check terminal.");
+  // The actual Network Bridge
+  const handlePredict = async () => {
+    setLoading(true);
+    setError(null);
+    setPrediction(null);
+
+    try {
+      // Map string UI data to actual numbers for the Java Spring Boot backend
+      const payload = {
+        store: parseInt(formData.Store),
+        dept: parseInt(formData.Dept),
+        size: parseInt(formData.Size),
+        temperature: parseFloat(formData.Temperature),
+        fuelPrice: parseFloat(formData.Fuel_Price),
+        cpi: parseFloat(formData.CPI),
+        unemployment: parseFloat(formData.Unemployment),
+        week: parseInt(formData.Week),
+        year: parseInt(formData.Year),
+      };
+
+      // Send the POST request to IP address
+      const response = await axios.post(
+        "http://192.168.1.4:8080/api/v1/predictions/forecast",
+        payload,
+      );
+
+      // Store the successful result in state
+      setPrediction(response.data.predictedSales);
+    } catch (err) {
+      console.error(err);
+      setError(
+        "Failed to connect to the AI Engine. Please check your network or server.",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -292,6 +331,39 @@ export default function App() {
       <TouchableOpacity style={styles.button} onPress={handlePredict}>
         <Text style={styles.buttonText}>Run AI Forecast</Text>
       </TouchableOpacity>
+
+      {/* --- LOADING SPINNER --- */}
+      {loading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#0F172A" />
+          <Text style={styles.loadingText}>Processing AI Forecast...</Text>
+        </View>
+      )}
+
+      {/* ---ERROR MESSAGE --- */}
+      {error && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      )}
+
+      {/* --- RESULTS DISPLAY CARD --- */}
+      {prediction !== null && !loading && (
+        <View style={styles.resultCard}>
+          <Text style={styles.resultLabel}>Projected Weekly Sales</Text>
+          {/* Format the number to look like real currency ($XX,XXX.XX) */}
+          <Text style={styles.resultValue}>
+            $
+            {prediction.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </Text>
+          <Text style={styles.resultSubText}>
+            Generated successfully by AI engine
+          </Text>
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -381,5 +453,56 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "800",
     letterSpacing: 0.5,
+  },
+  loadingContainer: {
+    alignItems: "center",
+    marginBottom: 40,
+  },
+  loadingText: {
+    marginTop: 10,
+    color: "#4B5563",
+    fontWeight: "600",
+  },
+  errorContainer: {
+    backgroundColor: "#FEE2E2",
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 40,
+    borderWidth: 1,
+    borderColor: "#FCA5A5",
+  },
+  errorText: {
+    color: "#DC2626",
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  resultCard: {
+    backgroundColor: "#10B981", // A nice success green
+    padding: 25,
+    borderRadius: 16,
+    alignItems: "center",
+    marginBottom: 50,
+    shadowColor: "#10B981",
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 5 },
+  },
+  resultLabel: {
+    color: "#D1FAE5",
+    fontSize: 14,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    marginBottom: 5,
+  },
+  resultValue: {
+    color: "white",
+    fontSize: 36,
+    fontWeight: "900",
+  },
+  resultSubText: {
+    color: "#D1FAE5",
+    fontSize: 12,
+    marginTop: 10,
   },
 });

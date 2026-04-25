@@ -26,8 +26,29 @@ public class AiPredictionService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // Package the headers and the DTO together
-        HttpEntity<AiPredictionRequest> entity = new HttpEntity<>(request, headers);
+        // Manually map Java fields to the "Picky" Python keys
+        Map<String, Object> pythonPayload = Map.ofEntries(
+                Map.entry("Store", request.getStore()),
+                Map.entry("Dept", request.getDept()),
+                Map.entry("Size", request.getSize()),
+                Map.entry("Temperature", request.getTemperature()),
+                Map.entry("Fuel_Price", request.getFuelPrice()),
+                Map.entry("CPI", request.getCpi()),
+                Map.entry("Unemployment", request.getUnemployment()),
+                Map.entry("Week", request.getWeek()),
+                Map.entry("Year", request.getYear()),
+                // Add the missing fields the model was trained on
+                Map.entry("MarkDown1", 0.0),
+                Map.entry("MarkDown2", 0.0),
+                Map.entry("MarkDown3", 0.0),
+                Map.entry("MarkDown4", 0.0),
+                Map.entry("MarkDown5", 0.0),
+                Map.entry("Type_B", false),
+                Map.entry("Type_C", false)
+        );
+
+        // Wrap the MAP instead of the REQUEST DTO
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(pythonPayload, headers);
 
         try {
             // Fire the POST request to the Python FastAPI microservice
