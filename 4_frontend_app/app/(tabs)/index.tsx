@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
+import { useRouter } from "expo-router";
 
 // A mini-database of the stores and their actual square footage
 const STORE_DICTIONARY = {
@@ -152,6 +153,8 @@ const WEEKS = Array.from({ length: 52 }, (_, i) => (i + 1).toString());
 const YEARS = ["2010", "2011", "2012", "2013"];
 
 export default function App() {
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     Store: "1",
     Size: STORE_DICTIONARY["1"], // Auto-fills based on the default Store
@@ -221,9 +224,30 @@ export default function App() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {/* EVERYTHING goes inside the headerContainer */}
       <View style={styles.headerContainer}>
-        <Text style={styles.headerTitle}>Apex Retail</Text>
-        <Text style={styles.subHeader}>Demand Forecasting Engine</Text>
+        {/* Wrap the text in a View so they stack vertically */}
+        <View>
+          <Text style={styles.headerTitle}>Apex Retail</Text>
+          <Text style={styles.subHeader}>Demand Forecasting Engine</Text>
+        </View>
+
+        {/* The updated button that passes data to the Analytics screen */}
+        <TouchableOpacity
+          style={styles.historyButton}
+          onPress={() => {
+            // Pass the current week and the predicted sales as URL parameters
+            router.push({
+              pathname: "/analytics",
+              params: {
+                week: formData.Week,
+                prediction: prediction,
+              },
+            });
+          }}
+        >
+          <Text style={styles.historyButtonText}>History</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.formCard}>
@@ -377,6 +401,8 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     marginBottom: 25,
+    flexDirection: "row", // This aligns the text and button side-by-side
+    justifyContent: "space-between", // This pushes the button to the far right
     alignItems: "center",
   },
   headerTitle: {
@@ -504,5 +530,16 @@ const styles = StyleSheet.create({
     color: "#D1FAE5",
     fontSize: 12,
     marginTop: 10,
+  },
+  historyButton: {
+    backgroundColor: "#E2E8F0",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+  },
+  historyButtonText: {
+    color: "#0F172A",
+    fontWeight: "700",
+    fontSize: 14,
   },
 });
