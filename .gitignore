@@ -15,3 +15,6 @@ venv/
 # Ignore Android/Kotlin build files
 .gradle/
 build/
+
+# Ignore large Machine Learning models
+*.joblib
