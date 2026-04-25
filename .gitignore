@@ -12,10 +12,6 @@ __pycache__/
 .env
 venv/
 
-# Ignore Android/Kotlin build files
-.gradle/
-build/
-
 # Ignore large Machine Learning models
 *.joblib
 
@@ -27,3 +23,17 @@ target/
 # Ignore IntelliJ IDEA config files
 .idea/
 *.iml
+
+# --- Frontend Mobile App (React Native / Expo) ---
+4_frontend_app/node_modules/
+4_frontend_app/.expo/
+4_frontend_app/dist/
+4_frontend_app/npm-debug.*
+4_frontend_app/*.jks
+4_frontend_app/*.p8
+4_frontend_app/*.p12
+4_frontend_app/*.key
+4_frontend_app/*.mobileprovision
+4_frontend_app/*.orig.*
+4_frontend_app/web-build/
+4_frontend_app/.env
